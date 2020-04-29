@@ -11,4 +11,4 @@ keywords = ["lexer", "lexing", "lex", "char"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-char-lex-macro = { path = "./char-lex-macro", version = "0.1.0" }
+char-lex-macro = "0.1.0"
