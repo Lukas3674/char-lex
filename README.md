@@ -1,6 +1,6 @@
 # CHAR-LEX
 
-`char_lex` is a crate for easely creating a `char` based lexer from multiple custom enums!
+`Char-Lex` is a crate for easely creating a `char` based lexer from multiple custom enums!
 
 #### [GitHub](https://github.com/Lukas3674/char-lex)
 #### [Crates.io](https://crates.io/crates/char-lex)
@@ -35,15 +35,17 @@ enum Digit {
 }
 
 fn main() {
-    let mut lexer: Lexer<Token, Token> = Lexer::new("1 \r\n 8 9");
+    let lexer: Lexer<Token, Token> = Lexer::new("1 \r\n 8 9", Some(Token::Whitespace));
+    let tokens: Vec<Token> = lexer.collect();
 
-    let mut tokens = Vec::new();
-    while let Ok(t) = lexer.poll(Some(Token::Whitespace)) {
-        tokens.push(t);
-    }
-    
-    assert_eq!(Err(LexErr::EndOfFile), lexer.poll(None));
-    assert_eq!(vec![Token::Digit(Digit::One), Token::Digit(Digit::Eight), Token::Digit(Digit::Nine)], tokens);
+    assert_eq!(
+        vec![
+            Token::Digit(Digit::One),
+            Token::Digit(Digit::Eight),
+            Token::Digit(Digit::Nine)
+        ],
+        tokens
+    );
 }
 ```
 
@@ -60,19 +62,23 @@ struct Wrapper {
 
 impl TokenWrapper<Token> for Wrapper {
     fn wrap(token: Token, context: Context) -> Self {
-        Self { token, character: context.character }
+        Self {
+            token,
+            character: context.character,
+        }
     }
 }
 
 fn main() {
-    let mut lexer: Lexer<Token, Wrapper> = Lexer::new("1");
+    let lexer: Lexer<Token, Wrapper> = Lexer::new("1", None);
+    let tokens: Vec<Wrapper> = lexer.collect();
 
-    let mut tokens = Vec::new();
-    while let Ok(t) = lexer.poll(Some(Token::Whitespace)) {
-        tokens.push(t);
-    }
-    
-    assert_eq!(Err(LexErr::EndOfFile), lexer.poll(None));
-    assert_eq!(vec![Wrapper { token: Token::Digit(Digit::One), character: '1' }], tokens);
+    assert_eq!(
+        vec![Wrapper {
+            token: Token::Digit(Digit::One),
+            character: '1'
+        }],
+        tokens
+    );
 }
 ```

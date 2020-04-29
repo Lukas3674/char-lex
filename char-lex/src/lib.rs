@@ -12,7 +12,7 @@
 
 //! # CHAR-LEX
 //!
-//! [`char_lex`] is a crate for easely creating a [`char`] based lexer from multiple custom enums!
+//! [`Char-Lex`] is a crate for easely creating a [`char`] based lexer from multiple custom enums!
 //!
 //! ## Example
 //!
@@ -43,14 +43,9 @@
 //! }
 //!
 //! fn main() {
-//!     let mut lexer: Lexer<Token, Token> = Lexer::new("1 \r\n 8 9");
-//!
-//!     let mut tokens = Vec::new();
-//!     while let Ok(t) = lexer.poll(Some(Token::Whitespace)) {
-//!         tokens.push(t);
-//!     }
+//!     let lexer: Lexer<Token, Token> = Lexer::new("1 \r\n 8 9", Some(Token::Whitespace));
+//!     let tokens: Vec<Token> = lexer.collect();
 //!     
-//!     assert_eq!(Err(LexErr::EndOfFile), lexer.poll(None));
 //!     assert_eq!(vec![Token::Digit(Digit::One), Token::Digit(Digit::Eight), Token::Digit(Digit::Nine)], tokens);
 //! }
 //! ```
@@ -65,24 +60,7 @@
 //! #[token]
 //! #[derive(Debug, PartialEq)]
 //! enum Token {
-//!     Whitespace = [' ', '\t', '\r', '\n'],
-//!
-//!     Digit(Digit),
-//! }
-//!
-//! #[token]
-//! #[derive(Debug, PartialEq)]
-//! enum Digit {
-//!     Zero = '0',
 //!     One = '1',
-//!     Two = '2',
-//!     Three = '3',
-//!     Four = '4',
-//!     Five = '5',
-//!     Six = '6',
-//!     Seven = '7',
-//!     Eight = '8',
-//!     Nine = '9',
 //! }
 //!
 //! #[derive(Debug, PartialEq)]
@@ -98,35 +76,30 @@
 //! }
 //!
 //! fn main() {
-//!     let mut lexer: Lexer<Token, Wrapper> = Lexer::new("1");
-//!
-//!     let mut tokens = Vec::new();
-//!     while let Ok(t) = lexer.poll(Some(Token::Whitespace)) {
-//!         tokens.push(t);
-//!     }
+//!     let lexer: Lexer<Token, Wrapper> = Lexer::new("1", None);
+//!     let tokens: Vec<Wrapper> = lexer.collect();
 //!     
-//!     assert_eq!(Err(LexErr::EndOfFile), lexer.poll(None));
-//!     assert_eq!(vec![Wrapper { token: Token::Digit(Digit::One), character: '1' }], tokens);
+//!     assert_eq!(vec![Wrapper { token: Token::One, character: '1' }], tokens);
 //! }
 //! ```
 //!
-//! [`char_lex`]: ./
+//! [`Char-Lex`]: ./
 //! [`char`]: https://doc.rust-lang.org/std/primitive.char.html
 //! [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
 
-/// Prelude module for [`char_lex`].
+/// Prelude module for [`Char-Lex`].
 /// It renames [`Error`] to `LexErr`!
 ///
-/// [`char_lex`]: ../
+/// [`Char-Lex`]: ../
 /// [`Error`]: ../error/enum.Error.html
 pub mod prelude {
     pub use crate::{error::Error as LexErr, utils::*, *};
 }
 
-/// Contains the [`Error`] type for module [`char_lex`].
+/// Contains the [`Error`] type for module [`Char-Lex`].
 ///
 /// [`Error`]: ./enum.Error.html
-/// [`char_lex`]: ../
+/// [`Char-Lex`]: ../
 pub mod error;
 
 /// Contains utility types like [`Context`]!
@@ -143,14 +116,14 @@ use error::Error;
 use std::marker::PhantomData;
 use utils::Context;
 
-/// The main lexer type from the module [`char_lex`].
+/// The main lexer type from the module [`Char-Lex`].
 ///
 /// # Generics
 /// `T`: [`TokenTrait`] is the trait implemented by [`token`] attribute macro.
 /// `W`: [`TokenWrapper<T>`] is the trait that can wrap a token to contain more information,
 /// all [`TokenTrait`] objects automatically implement [`TokenWrapper<T>`], so you don't need a wrapper!
 ///
-/// [`char_lex`]: ./
+/// [`Char-Lex`]: ./
 /// [`TokenTrait`]: ./trait.TokenTrait.html
 /// [`token`]: https://docs.rs/char-lex-macro/0.1.0/char_lex_macro/attr.token.html
 /// [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
@@ -162,7 +135,9 @@ where
 {
     cursor: usize,
     content: &'l str,
+    ignored: Option<T>,
     pos: (usize, usize),
+    error: Option<Error>,
     pd: PhantomData<(T, W)>,
 }
 
@@ -173,79 +148,88 @@ where
 {
     /// Create new [`Lexer<'l, T, W>`]
     ///
+    /// # Arguments
+    /// `content`: the string that is to be tokenized.
+    /// `ignored`: an optional token that the lexer will ignore and give you the next.
+    ///
     /// [`Lexer<'l, T, W>`]: ./struct.Lexer.html
-    pub fn new(content: &'l str) -> Self {
+    pub fn new(content: &'l str, ignored: Option<T>) -> Self {
         Self {
             content,
+            ignored,
             cursor: 0,
             pos: (1, 0),
+            error: None,
             pd: PhantomData,
         }
     }
 
-    /// Only peek at the next token / wrapper (`W`: [`TokenWrapper<T>`]),
-    /// the next peek will be the same as the previous!
+    /// Returns the [`Error`] that was the reason for the lexer to return `None` from the `next()` method!
     ///
-    /// Only a `&self` reference is required here!
-    ///
-    /// [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
-    pub fn peek(&self, ignored: Option<T>) -> Result<W, Error> {
-        let mut pos = self.pos;
-        let mut cursor = self.cursor;
-        loop {
-            cursor += 1;
-            if let Some(c) = next_char(self.content, cursor) {
-                pos.1 += 1;
-                if c == '\n' {
-                    pos.0 += 1;
-                    pos.1 = 0;
-                }
-                if let Some(t) = <T as TokenTrait>::match_char(c) {
-                    if let Some(i) = &ignored {
-                        if &t != i {
-                            break Ok(<W as TokenWrapper<T>>::wrap(t, Context::new(c, pos)));
-                        }
-                    } else {
-                        break Ok(<W as TokenWrapper<T>>::wrap(t, Context::new(c, pos)));
-                    }
-                } else {
-                    break Err(Error::Unexpected(Context::new(c, self.pos)));
-                }
-            } else {
-                break Err(Error::EndOfFile);
-            }
-        }
+    /// [`Error`]: ./error/enum.Error.html
+    pub fn get_error(&self) -> Option<&Error> {
+        self.error.as_ref()
     }
 
-    /// Poll the next token / wrapper (`W`: [`TokenWrapper<T>`]),
+    /// Returns the current cursor position.
+    pub fn get_cursor(&self) -> usize {
+        self.cursor
+    }
+
+    /// Sets the new cursor position.
+    /// Returns an [`Error`] if the cursor is out of `content` bounds!
     ///
-    /// A `&mut self` reference is required here!
-    ///
-    /// [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
-    pub fn poll(&mut self, ignored: Option<T>) -> Result<W, Error> {
-        loop {
-            self.cursor += 1;
-            if let Some(c) = next_char(self.content, self.cursor) {
-                self.pos.1 += 1;
-                if c == '\n' {
-                    self.pos.0 += 1;
-                    self.pos.1 = 0;
-                }
-                if let Some(t) = <T as TokenTrait>::match_char(c) {
-                    if let Some(i) = &ignored {
-                        if &t != i {
-                            break Ok(<W as TokenWrapper<T>>::wrap(t, Context::new(c, self.pos)));
+    /// [`Error`]: ./error/enum.Error.html
+    pub fn set_cursor(&mut self, cursor: usize) -> Result<(), Error> {
+        if cursor > 0 && cursor < self.content.len() {
+            self.cursor = cursor;
+            Ok(())
+        } else {
+            Err(Error::OutOfBounds)
+        }
+    }
+}
+
+impl<'l, T, W> Iterator for Lexer<'l, T, W>
+where
+    T: TokenTrait,
+    W: TokenWrapper<T>,
+{
+    type Item = W;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if let None = self.error {
+            loop {
+                self.cursor += 1;
+                if let Some(c) = next_char(self.content, self.cursor) {
+                    self.pos.1 += 1;
+                    if c == '\n' {
+                        self.pos.0 += 1;
+                        self.pos.1 = 0;
+                    }
+                    if let Some(t) = <T as TokenTrait>::match_char(c) {
+                        if let Some(i) = self.ignored.as_ref() {
+                            if &t != i {
+                                break Some(<W as TokenWrapper<T>>::wrap(
+                                    t,
+                                    Context::new(c, self.pos),
+                                ));
+                            }
+                        } else {
+                            break Some(<W as TokenWrapper<T>>::wrap(t, Context::new(c, self.pos)));
                         }
                     } else {
-                        break Ok(<W as TokenWrapper<T>>::wrap(t, Context::new(c, self.pos)));
+                        self.cursor -= 1;
+                        self.error = Some(Error::Unexpected(Context::new(c, self.pos)));
+                        break None;
                     }
                 } else {
-                    self.cursor -= 1;
-                    break Err(Error::Unexpected(Context::new(c, self.pos)));
+                    self.error = Some(Error::EndOfFile);
+                    break None;
                 }
-            } else {
-                break Err(Error::EndOfFile);
             }
+        } else {
+            None
         }
     }
 }
