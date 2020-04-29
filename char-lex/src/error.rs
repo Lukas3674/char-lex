@@ -10,11 +10,6 @@ pub enum Error {
     /// [`Lexer<'l, T, W>`]: ../struct.Lexer.html
     EndOfFile,
 
-    /// Type that is returned when the cursor that was set by the `set_cursor` method from the [`Lexer<'l, T, W>`] is out of `content` bounds.
-    ///
-    /// [`Lexer<'l, T, W>`]: ../struct.Lexer.html
-    OutOfBounds,
-
     /// Type that is returned when the [`Lexer<'l, T, W>`] encounters a [`char`] that is not matched by any `Token` with the [`TokenTrait`].
     ///
     /// [`Lexer<'l, T, W>`]: ../struct.Lexer.html

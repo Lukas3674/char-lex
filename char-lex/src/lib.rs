@@ -177,16 +177,8 @@ where
     }
 
     /// Sets the new cursor position.
-    /// Returns an [`Error`] if the cursor is out of `content` bounds!
-    ///
-    /// [`Error`]: ./error/enum.Error.html
-    pub fn set_cursor(&mut self, cursor: usize) -> Result<(), Error> {
-        if cursor > 0 && cursor < self.content.len() {
-            self.cursor = cursor;
-            Ok(())
-        } else {
-            Err(Error::OutOfBounds)
-        }
+    pub fn set_cursor(&mut self, cursor: usize) {
+        self.cursor = cursor
     }
 }
 
