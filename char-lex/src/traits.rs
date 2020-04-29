@@ -3,7 +3,7 @@ use super::utils::Context;
 /// The main trait for `Tokens`,
 /// it is the automatically implemented by the [`token`] attribute macro.
 ///
-/// [`token`]: https://doc.rust-lang.org/
+/// [`token`]: https://docs.rs/char-lex-macro/0.1.0/char_lex_macro/attr.token.html
 pub trait TokenTrait
 where
     Self: Sized + PartialEq,
@@ -16,7 +16,7 @@ where
 
 /// Trait for anything that wants to automatically wrap a `Token` with the [`TokenTrait`],
 ///
-/// [`TokenTrait`]: https://doc.rust-lang.org/
+/// [`TokenTrait`]: ../trait.TokenTrait.html
 pub trait TokenWrapper<T>
 where
     Self: Sized,
@@ -24,8 +24,8 @@ where
 {
     /// Function that wraps the `Token` with the [`TokenTrait`] and the [`Context`] in itself.
     ///
-    /// [`TokenTrait`]: https://doc.rust-lang.org/
-    /// [`Context`]: https://doc.rust-lang.org/
+    /// [`TokenTrait`]: ../trait.TokenTrait.html
+    /// [`Context`]: ../utils/struct.Context.html
     fn wrap(token: T, context: Context) -> Self;
 }
 

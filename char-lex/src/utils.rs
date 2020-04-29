@@ -1,19 +1,19 @@
 /// Context type for a `Token` with the [`TokenTrait`].
 ///
-/// [`TokenTrait`]: https://doc.rust-lang.org/
+/// [`TokenTrait`]: ../trait.TokenTrait.html
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Context {
     /// The corresponding [`char`] in this [`Context`].
     ///
     /// [`char`]: https://doc.rust-lang.org/std/primitive.char.html
-    /// [`Context`]: https://doc.rust-lang.org/
+    /// [`Context`]: ../utils/struct.Context.html
     pub character: char,
 
     /// The corresponding `position` in this [`Context`].
     ///
     /// It is meant to represent `(line, character)` positions.
     ///
-    /// [`Context`]: https://doc.rust-lang.org/
+    /// [`Context`]: ../utils/struct.Context.html
     pub position: (usize, usize),
 }
 

@@ -1,6 +1,6 @@
 # CHAR-LEX
 
-[`char_lex`] is a crate for easely creating a [`char`] based lexer from multiple custom enums!
+`char_lex` is a crate for easely creating a `char` based lexer from multiple custom enums!
 
 ## Example
 
@@ -43,7 +43,7 @@ fn main() {
 }
 ```
 
-`Tokens` can also be wrapped in anything that implements the [`TokenWrapper<T>`] trait!
+`Tokens` with the `TokenTrait` can also be wrapped in anything that implements the `TokenWrapper<T>` trait!
 
 ## Example
 
@@ -72,7 +72,3 @@ fn main() {
     assert_eq!(vec![Wrapper { token: Token::Digit(Digit::One), character: '1' }], tokens);
 }
 ```
-
-[`char_lex`]: https://doc.rust-lang.org/
-[`char`]: https://doc.rust-lang.org/std/primitive.char.html
-[`TokenWrapper<T>`]: https://doc.rust-lang.org/

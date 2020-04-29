@@ -85,28 +85,28 @@
 //! }
 //! ```
 //!
-//! [`char_lex`]: https://doc.rust-lang.org/
+//! [`char_lex`]: ./
 //! [`char`]: https://doc.rust-lang.org/std/primitive.char.html
-//! [`TokenWrapper<T>`]: https://doc.rust-lang.org/
+//! [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
 
 /// Prelude module for [`char_lex`].
 /// It renames [`Error`] to `LexErr`!
 ///
-/// [`char_lex`]: https://doc.rust-lang.org/
-/// [`Error`]: https://doc.rust-lang.org/
+/// [`char_lex`]: ./
+/// [`Error`]: ./error/enum.Error.html
 pub mod prelude {
     pub use crate::{error::Error as LexErr, utils::*, *};
 }
 
 /// Contains the [`Error`] type for module [`char_lex`].
 ///
-/// [`Error`]: https://doc.rust-lang.org/
-/// [`char_lex`]: https://doc.rust-lang.org/
+/// [`Error`]: ./error/enum.Error.html
+/// [`char_lex`]: ./
 pub mod error;
 
 /// Contains utility types like [`Context`]!
 ///
-/// [`Context`]: https://doc.rust-lang.org/
+/// [`Context`]: ./utils/struct.Context.html
 pub mod utils;
 
 pub use char_lex_macro::token;
@@ -125,10 +125,10 @@ use utils::Context;
 /// `W`: [`TokenWrapper<T>`] is the trait that can wrap a token to contain more information,
 /// all [`TokenTrait`] objects automatically implement [`TokenWrapper<T>`], so you don't need a wrapper!
 ///
-/// [`char_lex`]: https://doc.rust-lang.org/
-/// [`TokenTrait`]: https://doc.rust-lang.org/
-/// [`token`]: https://doc.rust-lang.org/
-/// [`TokenWrapper<T>`]: https://doc.rust-lang.org/
+/// [`char_lex`]: ./
+/// [`TokenTrait`]: ./trait.TokenTrait.html
+/// [`token`]: https://docs.rs/char-lex-macro/0.1.0/char_lex_macro/attr.token.html
+/// [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Lexer<'l, T, W>
 where
@@ -148,7 +148,7 @@ where
 {
     /// Create new [`Lexer<'l, T, W>`]
     ///
-    /// [`Lexer<'l, T, W>`]: https://doc.rust-lang.org/
+    /// [`Lexer<'l, T, W>`]: ./struct.Lexer.html
     pub fn new(content: &'l str) -> Self {
         Self {
             content,
@@ -163,7 +163,7 @@ where
     ///
     /// Only a `&self` reference is required here!
     ///
-    /// [`TokenWrapper<T>`]: https://doc.rust-lang.org/
+    /// [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
     pub fn peek(&self, ignored: Option<T>) -> Result<W, Error> {
         let mut pos = self.pos;
         let mut cursor = self.cursor;
@@ -196,7 +196,7 @@ where
     ///
     /// A `&mut self` reference is required here!
     ///
-    /// [`TokenWrapper<T>`]: https://doc.rust-lang.org/
+    /// [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
     pub fn poll(&mut self, ignored: Option<T>) -> Result<W, Error> {
         loop {
             self.cursor += 1;
