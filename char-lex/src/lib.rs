@@ -21,14 +21,6 @@
 //!
 //! #[token]
 //! #[derive(Debug, PartialEq)]
-//! enum Token {
-//!     Whitespace = [' ', '\t', '\r', '\n'],
-//!
-//!     Digit(Digit),
-//! }
-//!
-//! #[token]
-//! #[derive(Debug, PartialEq)]
 //! enum Digit {
 //!     Zero = '0',
 //!     One = '1',
@@ -43,10 +35,10 @@
 //! }
 //!
 //! fn main() {
-//!     let lexer: Lexer<Token, Token> = Lexer::new("1 \r\n 8 9", Some(Token::Whitespace));
-//!     let tokens: Vec<Token> = lexer.collect();
+//!     let lexer: Lexer<Digit, Digit> = Lexer::new("189");
+//!     let tokens: Vec<Digit> = lexer.collect();
 //!     
-//!     assert_eq!(vec![Token::Digit(Digit::One), Token::Digit(Digit::Eight), Token::Digit(Digit::Nine)], tokens);
+//!     assert_eq!(vec![Digit::One, Digit::Eight, Digit::Nine], tokens);
 //! }
 //! ```
 //!
@@ -76,7 +68,7 @@
 //! }
 //!
 //! fn main() {
-//!     let lexer: Lexer<Token, Wrapper> = Lexer::new("1", None);
+//!     let lexer: Lexer<Token, Wrapper> = Lexer::new("1");
 //!     let tokens: Vec<Wrapper> = lexer.collect();
 //!     
 //!     assert_eq!(vec![Wrapper { token: Token::One, character: '1' }], tokens);
@@ -108,7 +100,7 @@ pub mod error;
 pub mod utils;
 
 pub use char_lex_macro::token;
-pub use traits::{TokenTrait, TokenWrapper};
+pub use traits::{TokenMatch, TokenTrait, TokenWrapper};
 
 mod traits;
 
@@ -135,7 +127,6 @@ where
 {
     cursor: usize,
     content: &'l str,
-    ignored: Option<T>,
     pos: (usize, usize),
     error: Option<Error>,
     pd: PhantomData<(T, W)>,
@@ -153,14 +144,30 @@ where
     /// `ignored`: an optional token that the lexer will ignore and give you the next.
     ///
     /// [`Lexer<'l, T, W>`]: ./struct.Lexer.html
-    pub fn new(content: &'l str, ignored: Option<T>) -> Self {
+    pub fn new(content: &'l str) -> Self {
         Self {
             content,
-            ignored,
             cursor: 0,
             pos: (1, 0),
             error: None,
             pd: PhantomData,
+        }
+    }
+
+    /// Like the `next` methode but with the possibility to ignore certain `Tokens` with the [`TokenTrait`]
+    /// by giving a [`TokenMatch<T>`] like a single `Token` or multiple `[Tokens]`.
+    ///
+    /// [`TokenTrait`]: ./trait.TokenTrait.html
+    /// [`TokenMatch<T>`]: ./trait.TokenTrait.html
+    pub fn next_ignored<M>(&mut self, m: M) -> Option<W>
+    where
+        M: TokenMatch<T>,
+    {
+        loop {
+            let (t, c) = self.next_token()?;
+            if !m.matches_token(&t) {
+                break Some(<W as TokenWrapper<T>>::wrap(t, Context::new(c, self.pos)));
+            }
         }
     }
 
@@ -180,6 +187,31 @@ where
     pub fn set_cursor(&mut self, cursor: usize) {
         self.cursor = cursor
     }
+
+    fn next_token(&mut self) -> Option<(T, char)> {
+        if let None = self.error {
+            self.cursor += 1;
+            if let Some(c) = next_char(self.content, self.cursor) {
+                self.pos.1 += 1;
+                if c == '\n' {
+                    self.pos.0 += 1;
+                    self.pos.1 = 0;
+                }
+                if let Some(t) = <T as TokenTrait>::match_char(c) {
+                    Some((t, c))
+                } else {
+                    self.cursor -= 1;
+                    self.error = Some(Error::Unexpected(Context::new(c, self.pos)));
+                    None
+                }
+            } else {
+                self.error = Some(Error::EndOfFile);
+                None
+            }
+        } else {
+            None
+        }
+    }
 }
 
 impl<'l, T, W> Iterator for Lexer<'l, T, W>
@@ -190,39 +222,8 @@ where
     type Item = W;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let None = self.error {
-            loop {
-                self.cursor += 1;
-                if let Some(c) = next_char(self.content, self.cursor) {
-                    self.pos.1 += 1;
-                    if c == '\n' {
-                        self.pos.0 += 1;
-                        self.pos.1 = 0;
-                    }
-                    if let Some(t) = <T as TokenTrait>::match_char(c) {
-                        if let Some(i) = self.ignored.as_ref() {
-                            if &t != i {
-                                break Some(<W as TokenWrapper<T>>::wrap(
-                                    t,
-                                    Context::new(c, self.pos),
-                                ));
-                            }
-                        } else {
-                            break Some(<W as TokenWrapper<T>>::wrap(t, Context::new(c, self.pos)));
-                        }
-                    } else {
-                        self.cursor -= 1;
-                        self.error = Some(Error::Unexpected(Context::new(c, self.pos)));
-                        break None;
-                    }
-                } else {
-                    self.error = Some(Error::EndOfFile);
-                    break None;
-                }
-            }
-        } else {
-            None
-        }
+        let (t, c) = self.next_token()?;
+        Some(<W as TokenWrapper<T>>::wrap(t, Context::new(c, self.pos)))
     }
 }
 

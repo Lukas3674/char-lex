@@ -1,6 +1,6 @@
 [package]
 name = "char-lex"
-version = "1.0.1"
+version = "1.0.2"
 authors = ["Lukas3674 <lukashassler.lh@gmail.com>"]
 edition = "2018"
 repository = "https://github.com/Lukas3674/char-lex"

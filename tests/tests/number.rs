@@ -25,17 +25,17 @@ enum Digit {
 
 #[test]
 fn number_test() {
-    let mut lexer: Lexer<Token, Token> = Lexer::new("150", Some(Token::Whitespace));
+    let mut lexer: Lexer<Token, Token> = Lexer::new(" 150");
 
     let n = number(&mut lexer);
 
-    assert_eq!(&LexErr::EndOfFile, lexer.get_error().unwrap());
     assert_eq!(Some(vec![Digit::One, Digit::Five, Digit::Zero]), n);
+    assert_eq!(&LexErr::EndOfFile, lexer.get_error().unwrap());
 }
 
 fn number(lexer: &mut Lexer<Token, Token>) -> Option<Vec<Digit>> {
     let mut n = Vec::new();
-    while let Some(Token::Digit(d)) = lexer.next() {
+    while let Some(Token::Digit(d)) = lexer.next_ignored(Token::Whitespace) {
         n.push(d);
     }
 

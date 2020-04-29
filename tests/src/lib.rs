@@ -25,7 +25,7 @@ enum Digit {
 
 #[test]
 fn no_wrapper() {
-    let lexer: Lexer<Token, Token> = Lexer::new("1 \r\n 8 9", Some(Token::Whitespace));
+    let lexer: Lexer<Token, Token> = Lexer::new("189");
     let tokens: Vec<Token> = lexer.collect();
 
     assert_eq!(
@@ -55,8 +55,12 @@ impl TokenWrapper<Token> for Wrapper {
 
 #[test]
 fn wrapper() {
-    let lexer: Lexer<Token, Wrapper> = Lexer::new("1", None);
-    let tokens: Vec<Wrapper> = lexer.collect();
+    let mut lexer: Lexer<Token, Wrapper> = Lexer::new("1");
+
+    let mut tokens: Vec<Wrapper> = Vec::new();
+    for token in &mut lexer {
+        tokens.push(token);
+    }
 
     assert_eq!(
         vec![Wrapper {
@@ -65,4 +69,5 @@ fn wrapper() {
         }],
         tokens
     );
+    assert_eq!(&LexErr::EndOfFile, lexer.get_error().unwrap());
 }

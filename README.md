@@ -35,7 +35,7 @@ enum Digit {
 }
 
 fn main() {
-    let lexer: Lexer<Token, Token> = Lexer::new("1 \r\n 8 9", Some(Token::Whitespace));
+    let lexer: Lexer<Token, Token> = Lexer::new("189");
     let tokens: Vec<Token> = lexer.collect();
 
     assert_eq!(
@@ -70,7 +70,7 @@ impl TokenWrapper<Token> for Wrapper {
 }
 
 fn main() {
-    let lexer: Lexer<Token, Wrapper> = Lexer::new("1", None);
+    let lexer: Lexer<Token, Wrapper> = Lexer::new("1");
     let tokens: Vec<Wrapper> = lexer.collect();
 
     assert_eq!(

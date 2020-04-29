@@ -37,3 +37,39 @@ where
         token
     }
 }
+
+/// Trait for anything that wants to match a single `Token` with the [`TokenTrait`],
+///
+/// [`TokenTrait`]: ../trait.TokenTrait.html
+pub trait TokenMatch<T>
+where
+    T: TokenTrait,
+{
+    /// Function that matches a single `Token` with the [`TokenTrait`].
+    ///
+    /// [`TokenTrait`]: ../trait.TokenTrait.html
+    fn matches_token(&self, t: &T) -> bool;
+}
+
+impl<T> TokenMatch<T> for T
+where
+    T: TokenTrait,
+{
+    fn matches_token(&self, t: &T) -> bool {
+        self == t
+    }
+}
+
+impl<T> TokenMatch<T> for [T]
+where
+    T: TokenTrait,
+{
+    fn matches_token(&self, t: &T) -> bool {
+        for token in self {
+            if token == t {
+                return true;
+            }
+        }
+        false
+    }
+}

@@ -42,7 +42,7 @@ enum Parenthesis {
 
 #[test]
 fn parser_test() {
-    let mut lexer: Lexer<Token, Token> = Lexer::new("1 + (3 + 6);", Some(Token::Whitespace));
+    let mut lexer: Lexer<Token, Token> = Lexer::new("1 + (3 + 6);");
 
     let state = statement(&mut lexer);
 
@@ -74,7 +74,7 @@ fn statement(lexer: &mut Lexer<Token, Token>) -> Option<Statement> {
     let cursor = lexer.get_cursor();
 
     if let Some(expr) = expression(lexer) {
-        if let Some(Token::Symbol(Symbol::Semicolon)) = lexer.next() {
+        if let Some(Token::Symbol(Symbol::Semicolon)) = lexer.next_ignored(Token::Whitespace) {
             return Some(Statement::Expression(expr));
         }
     }
@@ -97,9 +97,13 @@ fn expression(lexer: &mut Lexer<Token, Token>) -> Option<Expression> {
 fn parenthesis_expr(lexer: &mut Lexer<Token, Token>) -> Option<Expression> {
     let cursor = lexer.get_cursor();
 
-    if let Some(Token::Symbol(Symbol::Parenthesis(Parenthesis::Left))) = lexer.next() {
+    if let Some(Token::Symbol(Symbol::Parenthesis(Parenthesis::Left))) =
+        lexer.next_ignored(Token::Whitespace)
+    {
         if let Some(expr) = expression(lexer) {
-            if let Some(Token::Symbol(Symbol::Parenthesis(Parenthesis::Right))) = lexer.next() {
+            if let Some(Token::Symbol(Symbol::Parenthesis(Parenthesis::Right))) =
+                lexer.next_ignored(Token::Whitespace)
+            {
                 return Some(Expression::Parenthesis(Box::new(expr)));
             }
         }
@@ -112,7 +116,7 @@ fn plus_expr(lexer: &mut Lexer<Token, Token>) -> Option<Expression> {
     let cursor = lexer.get_cursor();
 
     if let Some(expr1) = digit_expr(lexer) {
-        if let Some(Token::Symbol(Symbol::Plus)) = lexer.next() {
+        if let Some(Token::Symbol(Symbol::Plus)) = lexer.next_ignored(Token::Whitespace) {
             if let Some(expr2) = expression(lexer) {
                 return Some(Expression::Plus(Box::new(expr1), Box::new(expr2)));
             }
@@ -125,7 +129,7 @@ fn plus_expr(lexer: &mut Lexer<Token, Token>) -> Option<Expression> {
 fn digit_expr(lexer: &mut Lexer<Token, Token>) -> Option<Expression> {
     let cursor = lexer.get_cursor();
 
-    if let Some(Token::Digit(d)) = lexer.next() {
+    if let Some(Token::Digit(d)) = lexer.next_ignored(Token::Whitespace) {
         Some(Expression::Digit(d))
     } else {
         lexer.set_cursor(cursor);
