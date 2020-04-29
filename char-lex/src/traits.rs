@@ -60,7 +60,7 @@ where
     }
 }
 
-impl<T> TokenMatch<T> for [T]
+impl<T> TokenMatch<T> for Vec<T>
 where
     T: TokenTrait,
 {

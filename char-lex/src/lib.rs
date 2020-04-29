@@ -154,7 +154,7 @@ where
     }
 
     /// Like the `next` methode but with the possibility to ignore certain `Tokens` with the [`TokenTrait`]
-    /// by giving a [`TokenMatch<T>`] like a single `Token` or multiple `[Tokens]`.
+    /// by giving a [`TokenMatch<T>`] like a single `Token` or multiple `vec![Tokens]`.
     ///
     /// [`TokenTrait`]: ./trait.TokenTrait.html
     /// [`TokenMatch<T>`]: ./trait.TokenTrait.html
