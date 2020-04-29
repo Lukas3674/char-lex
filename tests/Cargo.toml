@@ -1,0 +1,12 @@
+[package]
+name = "tests"
+version = "0.0.0"
+authors = ["Lukas3674 <lukashassler.lh@gmail.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+char-lex = { path = "../char-lex" }
+char-lex-macro = { path = "../char-lex-macro" }

@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "tests",
     "char-lex",
     "char-lex-macro",
 ]

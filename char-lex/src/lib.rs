@@ -20,7 +20,7 @@
 //! use char_lex::prelude::*;
 //!
 //! #[token]
-//! #[derive(PartialEq)]
+//! #[derive(Debug, PartialEq)]
 //! enum Token {
 //!     Whitespace = [' ', '\t', '\r', '\n'],
 //!
@@ -28,7 +28,7 @@
 //! }
 //!
 //! #[token]
-//! #[derive(PartialEq)]
+//! #[derive(Debug, PartialEq)]
 //! enum Digit {
 //!     Zero = '0',
 //!     One = '1',
@@ -60,14 +60,39 @@
 //! ## Example
 //!
 //! ```rust
-//! #[derive(PartialEq)]
-//! struct Wrapper<Token> {
+//! use char_lex::prelude::*;
+//!
+//! #[token]
+//! #[derive(Debug, PartialEq)]
+//! enum Token {
+//!     Whitespace = [' ', '\t', '\r', '\n'],
+//!
+//!     Digit(Digit),
+//! }
+//!
+//! #[token]
+//! #[derive(Debug, PartialEq)]
+//! enum Digit {
+//!     Zero = '0',
+//!     One = '1',
+//!     Two = '2',
+//!     Three = '3',
+//!     Four = '4',
+//!     Five = '5',
+//!     Six = '6',
+//!     Seven = '7',
+//!     Eight = '8',
+//!     Nine = '9',
+//! }
+//!
+//! #[derive(Debug, PartialEq)]
+//! struct Wrapper {
 //!     token: Token,
 //!     character: char,
 //! }
 //!
 //! impl TokenWrapper<Token> for Wrapper {
-//!     fn wrap(token: T, context: Context) -> Self {
+//!     fn wrap(token: Token, context: Context) -> Self {
 //!         Self { token, character: context.character }
 //!     }
 //! }
