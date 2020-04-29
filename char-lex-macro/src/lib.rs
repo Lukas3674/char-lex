@@ -15,7 +15,7 @@
 //! The `proc_macro_attribute` [`token`] for the [`char_lex`] crate.
 //!
 //! [`token`]: ./attr.token.html
-//! [`char_lex`]: https://docs.rs/char-lex/0.1.0/char_lex/
+//! [`char_lex`]: https://docs.rs/char-lex/
 
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};

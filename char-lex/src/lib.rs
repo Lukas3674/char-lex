@@ -92,21 +92,21 @@
 /// Prelude module for [`char_lex`].
 /// It renames [`Error`] to `LexErr`!
 ///
-/// [`char_lex`]: ./
-/// [`Error`]: ./error/enum.Error.html
+/// [`char_lex`]: ../
+/// [`Error`]: ../error/enum.Error.html
 pub mod prelude {
     pub use crate::{error::Error as LexErr, utils::*, *};
 }
 
 /// Contains the [`Error`] type for module [`char_lex`].
 ///
-/// [`Error`]: ./error/enum.Error.html
-/// [`char_lex`]: ./
+/// [`Error`]: ./enum.Error.html
+/// [`char_lex`]: ../
 pub mod error;
 
 /// Contains utility types like [`Context`]!
 ///
-/// [`Context`]: ./utils/struct.Context.html
+/// [`Context`]: ./struct.Context.html
 pub mod utils;
 
 pub use char_lex_macro::token;

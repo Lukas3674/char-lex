@@ -1,6 +1,6 @@
 use super::utils::Context;
 
-/// Error type for module [`char_lex`].
+/// Error type.
 ///
 /// [`char_lex`]: ../
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
