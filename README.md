@@ -1,10 +1,10 @@
 # CHAR-LEX
 
-[GitHub](https://github.com/Lukas3674/char-lex)
-[Crates.io](https://crates.io/crates/char-lex)
-[Docs.rs](https://docs.rs/char-lex/0.1.1/char_lex/)
-
 `char_lex` is a crate for easely creating a `char` based lexer from multiple custom enums!
+
+#### [GitHub](https://github.com/Lukas3674/char-lex)
+#### [Crates.io](https://crates.io/crates/char-lex)
+#### [Docs.rs](https://docs.rs/char-lex/0.1.1/char_lex/)
 
 ## Example
 
