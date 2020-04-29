@@ -12,7 +12,7 @@
 use char_lex::prelude::*;
 
 #[token]
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 enum Token {
     Whitespace = [' ', '\t', '\r', '\n'],
 
@@ -20,7 +20,7 @@ enum Token {
 }
 
 #[token]
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 enum Digit {
     Zero = '0',
     One = '1',
@@ -52,7 +52,7 @@ fn main() {
 ## Example
 
 ```rust
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 struct Wrapper {
     token: Token,
     character: char,
