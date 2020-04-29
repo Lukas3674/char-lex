@@ -141,7 +141,6 @@ where
     ///
     /// # Arguments
     /// `content`: the string that is to be tokenized.
-    /// `ignored`: an optional token that the lexer will ignore and give you the next.
     ///
     /// [`Lexer<'l, T, W>`]: ./struct.Lexer.html
     pub fn new(content: &'l str) -> Self {
