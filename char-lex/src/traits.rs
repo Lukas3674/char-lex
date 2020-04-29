@@ -3,7 +3,7 @@ use super::utils::Context;
 /// The main trait for `Tokens`,
 /// it is the automatically implemented by the [`token`] attribute macro.
 ///
-/// [`token`]: https://docs.rs/char-lex-macro/0.1.0/char_lex_macro/attr.token.html
+/// [`token`]: https://docs.rs/char-lex-macro/1.0.0/char_lex_macro/attr.token.html
 pub trait TokenTrait
 where
     Self: Sized + PartialEq,

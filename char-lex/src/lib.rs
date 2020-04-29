@@ -12,7 +12,7 @@
 
 //! # CHAR-LEX
 //!
-//! [`Char-Lex`] is a crate for easely creating a [`char`] based lexer from multiple custom enums!
+//! `Char-Lex` is a crate for easely creating a [`char`] based lexer from multiple custom enums!
 //!
 //! ## Example
 //!
@@ -75,28 +75,19 @@
 //! }
 //! ```
 //!
-//! [`Char-Lex`]: ./
 //! [`char`]: https://doc.rust-lang.org/std/primitive.char.html
 //! [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
 
-/// Prelude module for [`Char-Lex`].
-/// It renames [`Error`] to `LexErr`!
-///
-/// [`Char-Lex`]: ../
-/// [`Error`]: ../error/enum.Error.html
+/// Prelude module.
+/// It renames `Error` to `LexErr`!
 pub mod prelude {
     pub use crate::{error::Error as LexErr, utils::*, *};
 }
 
-/// Contains the [`Error`] type for module [`Char-Lex`].
-///
-/// [`Error`]: ./enum.Error.html
-/// [`Char-Lex`]: ../
+/// Contains the `Error` type.
 pub mod error;
 
-/// Contains utility types like [`Context`]!
-///
-/// [`Context`]: ./struct.Context.html
+/// Contains utility types!
 pub mod utils;
 
 pub use char_lex_macro::token;
@@ -108,16 +99,15 @@ use error::Error;
 use std::marker::PhantomData;
 use utils::Context;
 
-/// The main lexer type from the module [`Char-Lex`].
+/// The main lexer type.
 ///
 /// # Generics
 /// `T`: [`TokenTrait`] is the trait implemented by [`token`] attribute macro.
 /// `W`: [`TokenWrapper<T>`] is the trait that can wrap a token to contain more information,
 /// all [`TokenTrait`] objects automatically implement [`TokenWrapper<T>`], so you don't need a wrapper!
 ///
-/// [`Char-Lex`]: ./
 /// [`TokenTrait`]: ./trait.TokenTrait.html
-/// [`token`]: https://docs.rs/char-lex-macro/0.1.0/char_lex_macro/attr.token.html
+/// [`token`]: https://docs.rs/char-lex-macro/1.0.0/char_lex_macro/attr.token.html
 /// [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Lexer<'l, T, W>
