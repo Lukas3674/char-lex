@@ -12,9 +12,9 @@
 
 //! # CHAR-LEX-MACRO
 //!
-//! The `proc_macro_attribute` [`#[token]`] for the [`char_lex`] crate.
+//! The `proc_macro_attribute` [`token`] for the [`char_lex`] crate.
 //!
-//! [`#[token]`]: https://doc.rust-lang.org/
+//! [`token`]: https://doc.rust-lang.org/
 //! [`char_lex`]: https://doc.rust-lang.org/
 
 use proc_macro::TokenStream;
@@ -22,9 +22,9 @@ use quote::{quote, ToTokens};
 use syn::fold::Fold;
 use syn::{self, parse_macro_input};
 
-/// The [`#[token]`] attribute macro function.
+/// The [`token`] attribute macro.
 ///
-/// [`#[token]`]: https://doc.rust-lang.org/
+/// [`token`]: https://doc.rust-lang.org/
 #[proc_macro_attribute]
 pub fn token(_unused: TokenStream, input: TokenStream) -> TokenStream {
     let item_enum = parse_macro_input!(input as syn::ItemEnum);

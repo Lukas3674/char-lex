@@ -5,11 +5,13 @@ authors = ["Lukas3674 <lukashassler.lh@gmail.com>"]
 edition = "2018"
 repository = "https://github.com/Lukas3674/char-lex"
 license = "MIT OR Apache-2.0"
-readme = "README.md"
+description = "Create easy enum based lexers"
+readme = "../README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
+name = "char_lex_macro"
 proc-macro = true
 
 [dependencies]
