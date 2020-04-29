@@ -12,7 +12,7 @@ keywords = ["lexer", "lexing", "tokenizer", "parser", "char"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-char-lex-macro = { version = "0.2", optional = true }
+char-lex-macro = { version = "0.2.0", optional = true }
 
 
 [features]
