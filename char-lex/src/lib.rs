@@ -172,7 +172,6 @@ where
                 if let Some(t) = <T as TokenTrait>::match_char(c) {
                     Some((t, c))
                 } else {
-                    self.cursor -= 1;
                     self.error = Some(Error::Unexpected(Context::new(c, self.pos)));
                     None
                 }
