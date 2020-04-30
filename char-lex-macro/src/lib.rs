@@ -12,19 +12,16 @@
 
 //! # CHAR-LEX-MACRO
 //!
-//! The `proc_macro_attribute` [`token`] for the [`char_lex`] crate.
+//! The `proc_macro_attribute` crate for [`Char-lex`].
 //!
-//! [`token`]: ./attr.token.html
-//! [`char_lex`]: https://docs.rs/char-lex/
+//! [`Char-lex`]: https://docs.rs/char-lex/
 
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::fold::Fold;
 use syn::{self, parse_macro_input};
 
-/// The [`token`] attribute macro.
-///
-/// [`token`]: ./attr.token.html
+/// The `token` attribute macro.
 #[proc_macro_attribute]
 pub fn token(_unused: TokenStream, input: TokenStream) -> TokenStream {
     let item_enum = parse_macro_input!(input as syn::ItemEnum);

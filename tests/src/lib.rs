@@ -10,7 +10,9 @@
     unused_qualifications
 )]
 
-//! Tests for the `Char-Lex` crate.
+//! Tests for the [`Char-lex`] crate.
+//!
+//! [`Char-lex`]: https://docs.rs/char-lex/
 
 use char_lex::prelude::*;
 

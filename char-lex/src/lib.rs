@@ -12,7 +12,7 @@
 
 //! # CHAR-LEX
 //!
-//! `Char-Lex` is a crate for easely creating a [`char`] based lexer from multiple custom enums!
+//! `Char-Lex` is a crate for easely creating a `char` based lexer from multiple custom enums!
 //!
 //! ## Example
 //!
@@ -42,7 +42,7 @@
 //! }
 //! ```
 //!
-//! `Tokens` with the [`TokenTrait`] can also be wrapped in anything that implements the [`TokenWrapper<T>`] trait!
+//! `Tokens` can also be wrapped in anything that implements the `TokenWrapper<T>` trait!
 //!
 //! ## Example
 //!
@@ -74,9 +74,6 @@
 //!     assert_eq!(vec![Wrapper { token: Token::One, character: '1' }], tokens);
 //! }
 //! ```
-//!
-//! [`char`]: https://doc.rust-lang.org/std/primitive.char.html
-//! [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
 
 /// Prelude module.
 /// It renames `Error` to `LexErr`!
@@ -102,13 +99,9 @@ use utils::Context;
 /// The main lexer type.
 ///
 /// # Generics
-/// `T`: [`TokenTrait`] is the trait implemented by [`token`] attribute macro.
-/// `W`: [`TokenWrapper<T>`] is the trait that can wrap a token to contain more information,
-/// all [`TokenTrait`] objects automatically implement [`TokenWrapper<T>`], so you don't need a wrapper!
-///
-/// [`TokenTrait`]: ./trait.TokenTrait.html
-/// [`token`]: https://docs.rs/char-lex-macro/1.0.0/char_lex_macro/attr.token.html
-/// [`TokenWrapper<T>`]: ./trait.TokenWrapper.html
+/// `T`: `TokenTrait` is the trait implemented by `token` attribute macro.
+/// `W`: `TokenWrapper<T>` is the trait that can wrap any token to contain more information,
+/// all `TokenTrait` objects automatically implement `TokenWrapper<Self>`, so you don't necessarily need a wrapper!
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Lexer<'l, T, W>
 where
@@ -127,12 +120,7 @@ where
     T: TokenTrait,
     W: TokenWrapper<T>,
 {
-    /// Create new [`Lexer<'l, T, W>`]
-    ///
-    /// # Arguments
-    /// `content`: the string that is to be tokenized.
-    ///
-    /// [`Lexer<'l, T, W>`]: ./struct.Lexer.html
+    /// Create a new `Lexer<'l, T, W>` with th `content: &str` that is to be tokenized.
     pub fn new(content: &'l str) -> Self {
         Self {
             content,
@@ -143,11 +131,8 @@ where
         }
     }
 
-    /// Like the `next` methode but with the possibility to ignore certain `Tokens` with the [`TokenTrait`]
-    /// by giving a [`TokenMatch<T>`] like a single `Token` or multiple `vec![Tokens]`.
-    ///
-    /// [`TokenTrait`]: ./trait.TokenTrait.html
-    /// [`TokenMatch<T>`]: ./trait.TokenTrait.html
+    /// Like the `next` method but with the possibility to ignore certain `Tokens`
+    /// by giving a `TokenMatch<T>` like a single `Token` or multiple `vec![Tokens]`.
     pub fn next_ignored<M>(&mut self, m: M) -> Option<W>
     where
         M: TokenMatch<T>,
@@ -160,9 +145,7 @@ where
         }
     }
 
-    /// Returns the [`Error`] that was the reason for the lexer to return `None` from the `next()` method!
-    ///
-    /// [`Error`]: ./error/enum.Error.html
+    /// Returns the `Error` that was the reason for the lexer to return `None` from any `next` method!
     pub fn get_error(&self) -> Option<&Error> {
         self.error.as_ref()
     }
