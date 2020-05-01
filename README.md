@@ -1,9 +1,11 @@
+
+# __Discontinued__
+
+Use as you please...
+
 # CHAR-LEX
 
 `Char-Lex` is a crate for easely creating a `char` based lexer from multiple custom enums!
-
-#### [Crates.io](https://crates.io/crates/char-lex)
-#### [Docs.rs](https://docs.rs/char-lex/)
 
 ## Example
 
